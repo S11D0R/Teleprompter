@@ -38,11 +38,6 @@ public class IOFile {
                 filePath = fileName.getAbsolutePath();
                 BufferedReader reader = new BufferedReader(new FileReader(fileName));
                 jTextArea1.read(reader, null);
-//                String string;
-//                while ((string = reader.readLine()) != null) {
-//                jTextArea1.append(string + "\n");
-//                }
-//                jTextArea1.setCaretPosition(0);
                 reader.close();
                 return ret;
             } catch (FileNotFoundException e) {
