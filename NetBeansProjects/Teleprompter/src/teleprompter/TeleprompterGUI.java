@@ -6,12 +6,16 @@
 package teleprompter;
 
 import java.awt.Point;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -21,14 +25,35 @@ public class TeleprompterGUI extends javax.swing.JFrame {
 
     Boolean stopPlayback = true;
     int playbackPoint = 0;
-    int fontSize = 12;
+    static int fontSize = 5;
+    static int maxSleep = 130;
+    static int minSleep = 30;
+    static boolean color = false;
     String filePath = null;
     /**
      * Creates new form TeleprompterGUI
      */
     public TeleprompterGUI() {
         initComponents();
+        jPanel1.setVisible(false);
 
+        WindowListener exitListener = new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                if(!jTextArea1.getText().isEmpty() ){
+                    int confirm = JOptionPane.showOptionDialog(
+                            null, "Are You Sure to Close Application?", "Exit Confirmation", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null, null, null);
+                    if (confirm == 0) {
+                        IOFile save = new IOFile();
+                        
+                    }
+                } else {
+                }
+                System.exit(0);
+               
+            }
+        };
+        addWindowListener(exitListener);
     }
 
     /**
@@ -43,39 +68,36 @@ public class TeleprompterGUI extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        openButton = new javax.swing.JButton();
         playButton = new javax.swing.JButton();
         jSlider1 = new javax.swing.JSlider();
         stopButton = new javax.swing.JButton();
         pauseButton = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea2 = new javax.swing.JTextArea();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuCreateButton = new javax.swing.JMenuItem();
+        jMenuOpenButton = new javax.swing.JMenuItem();
+        jMenuSaveButton = new javax.swing.JMenuItem();
+        jMenuSaveAsButton = new javax.swing.JMenuItem();
+        jMenuCloseButton = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem5 = new javax.swing.JMenuItem();
-        jSeparator1 = new javax.swing.JPopupMenu.Separator();
-        jMenuItem6 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Teleprompter");
-        setMaximumSize(new java.awt.Dimension(676, 414));
-        setMinimumSize(new java.awt.Dimension(676, 414));
-        setPreferredSize(new java.awt.Dimension(676, 414));
+        setMaximumSize(null);
+        setMinimumSize(null);
+        setPreferredSize(new java.awt.Dimension(836, 433));
         setResizable(false);
 
-        jPanel1.setMaximumSize(new java.awt.Dimension(676, 414));
-        jPanel1.setMinimumSize(new java.awt.Dimension(676, 414));
-        jPanel1.setPreferredSize(new java.awt.Dimension(676, 414));
+        jPanel1.setMaximumSize(null);
+        jPanel1.setMinimumSize(null);
+        jPanel1.setPreferredSize(new java.awt.Dimension(836, 412));
 
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-        jScrollPane1.setEnabled(false);
         jScrollPane1.setMaximumSize(new java.awt.Dimension(320, 78));
         jScrollPane1.setMinimumSize(new java.awt.Dimension(320, 78));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(320, 78));
@@ -85,15 +107,8 @@ public class TeleprompterGUI extends javax.swing.JFrame {
         jTextArea1.setLineWrap(true);
         jTextArea1.setRows(5);
         jTextArea1.setWrapStyleWord(true);
+        jTextArea1.setEnabled(false);
         jScrollPane1.setViewportView(jTextArea1);
-
-        openButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
-        openButton.setText("Открыть");
-        openButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                openButtonActionPerformed(evt);
-            }
-        });
 
         playButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         playButton.setText("Play");
@@ -107,24 +122,27 @@ public class TeleprompterGUI extends javax.swing.JFrame {
         jSlider1.setMajorTickSpacing(20);
         jSlider1.setMaximum(150);
         jSlider1.setMinimum(50);
-        jSlider1.setMinorTickSpacing(10);
+        jSlider1.setMinorTickSpacing(1);
         jSlider1.setPaintLabels(true);
         jSlider1.setPaintTicks(true);
         jSlider1.setSnapToTicks(true);
+        jSlider1.setEnabled(false);
 
         stopButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         stopButton.setText("Stop");
         stopButton.setEnabled(false);
+        stopButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopButtonActionPerformed(evt);
+            }
+        });
 
         pauseButton.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
         pauseButton.setText("Pause");
         pauseButton.setEnabled(false);
-
-        jButton5.setFont(new java.awt.Font("Dialog", 1, 10)); // NOI18N
-        jButton5.setText("Загрузка");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        pauseButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                pauseButtonActionPerformed(evt);
             }
         });
 
@@ -139,6 +157,7 @@ public class TeleprompterGUI extends javax.swing.JFrame {
         jTextArea2.setWrapStyleWord(true);
         jTextArea2.setAutoscrolls(false);
         jTextArea2.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jTextArea2.setEnabled(false);
         jTextArea2.setFocusable(false);
         jTextArea2.setRequestFocusEnabled(false);
         jTextArea2.setVerifyInputWhenFocusTarget(false);
@@ -150,72 +169,99 @@ public class TeleprompterGUI extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(openButton)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButton5))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(29, 29, 29)
-                                .addComponent(pauseButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(playButton)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(stopButton)))))
-                .addGap(0, 12, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(openButton)
-                    .addComponent(jButton5))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pauseButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(playButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(stopButton))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+                    .addComponent(jSlider1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(12, 12, 12))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 300, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(pauseButton)
                             .addComponent(playButton)
-                            .addComponent(stopButton)
-                            .addComponent(pauseButton))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
-                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(stopButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jSlider1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
 
         jMenu1.setText("Файл");
 
-        jMenuItem4.setText("Создать");
-        jMenu1.add(jMenuItem4);
+        jMenuCreateButton.setText("Создать");
+        jMenuCreateButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuCreateButtonActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuCreateButton);
 
-        jMenuItem1.setText("Открыть...");
-        jMenu1.add(jMenuItem1);
+        jMenuOpenButton.setText("Открыть...");
+        jMenuOpenButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuOpenButtonActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuOpenButton);
 
-        jMenuItem2.setText("Сохранить");
-        jMenu1.add(jMenuItem2);
+        jMenuSaveButton.setText("Сохранить");
+        jMenu1.add(jMenuSaveButton);
 
-        jMenuItem3.setText("Сохранить как...");
-        jMenu1.add(jMenuItem3);
+        jMenuSaveAsButton.setText("Сохранить как...");
+        jMenu1.add(jMenuSaveAsButton);
 
-        jMenuItem5.setText("Закрыть");
-        jMenu1.add(jMenuItem5);
-        jMenu1.add(jSeparator1);
-
-        jMenuItem6.setText("Выход");
-        jMenu1.add(jMenuItem6);
+        jMenuCloseButton.setText("Закрыть");
+        jMenuCloseButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuCloseButtonActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuCloseButton);
 
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Edit");
+
+        jMenuItem1.setText("jMenuItem1");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem1);
+
+        jMenuItem2.setText("jMenuItem2");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem2);
+
+        jMenuItem3.setText("jMenuItem3");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem3ActionPerformed(evt);
+            }
+        });
+        jMenu2.add(jMenuItem3);
+
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -224,13 +270,11 @@ public class TeleprompterGUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 21, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
@@ -247,12 +291,18 @@ public class TeleprompterGUI extends javax.swing.JFrame {
 
     }//GEN-LAST:event_playButtonActionPerformed
 
-    private void openButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openButtonActionPerformed
+    private void jMenuCreateButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuCreateButtonActionPerformed
+        // TODO add your handling code here:
+        jTextArea1.setEnabled(true);
+        jPanel1.setVisible(true);
+        
+    }//GEN-LAST:event_jMenuCreateButtonActionPerformed
 
-            // TODO add your handling code here:
-//        IOFile open = new IOFile();
-//        open.openFunc(jTextArea1, filePath);
-BufferedReader reader = null;
+    private void jMenuOpenButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuOpenButtonActionPerformed
+        // TODO add your handling code here:
+        //        IOFile open = new IOFile();
+        //        open.openFunc(jTextArea1, filePath);
+        BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader("/home/temadk/Рабочий стол/Пустой документ"));
             jTextArea1.read(reader, null);
@@ -268,14 +318,60 @@ BufferedReader reader = null;
                 Logger.getLogger(TeleprompterGUI.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-                
-    }//GEN-LAST:event_openButtonActionPerformed
+        jPanel1.setVisible(true);
+        jTextArea1.setEnabled(true);
+    }//GEN-LAST:event_jMenuOpenButtonActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void jMenuCloseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuCloseButtonActionPerformed
         // TODO add your handling code here:
-        jTextArea2.setText(jTextArea1.getText());
+        jPanel1.setVisible(false);
+        jTextArea1.setText(null);
+        jTextArea2.setText(null);
+    }//GEN-LAST:event_jMenuCloseButtonActionPerformed
+
+    private void stopButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopButtonActionPerformed
+        // TODO add your handling code here:
+        stopPlayback = true;
         playButton.setEnabled(true);
-    }//GEN-LAST:event_jButton5ActionPerformed
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+        playbackPoint = 0;
+        jScrollPane2.getViewport().setViewPosition(new Point(0,playbackPoint));
+    }//GEN-LAST:event_stopButtonActionPerformed
+
+    private void pauseButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pauseButtonActionPerformed
+        // TODO add your handling code here:
+        stopPlayback = true;
+        playButton.setEnabled(true);
+        pauseButton.setEnabled(false);
+        stopButton.setEnabled(false);
+    }//GEN-LAST:event_pauseButtonActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:
+        jTextArea2.setEnabled(true);
+        jTextArea2.setText(jTextArea1.getText());
+        jTextArea2.setCaretPosition(0);
+        playButton.setEnabled(true);
+        jSlider1.setEnabled(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        // TODO add your handling code here:
+        settingsGUI settings = new settingsGUI();
+        settings.setVisible(true);
+//        settings.addWindowListener(new WindowListener(){
+//        public void windowClosing(WindowEvent e) {
+//                setSettings();
+//            }
+//    });
+    
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+        // TODO add your handling code here:
+        setSettings();
+    }//GEN-LAST:event_jMenuItem3ActionPerformed
 
     private int CaretPosition(){
         if (jTextArea1.getCaretPosition() + 1 < jTextArea1.getDocument().getLength())
@@ -284,6 +380,35 @@ BufferedReader reader = null;
             return jTextArea1.getDocument().getLength();
         
     }
+    
+    public void setSettings(){
+        jTextArea2.setFont(new java.awt.Font("Dialog", 1, fontSize));
+        jSlider1.setMaximum(maxSleep);
+        jSlider1.setMinimum(minSleep);
+        if(color){
+        jTextArea2.setForeground(new java.awt.Color(255, 255, 255));
+        jTextArea2.setBackground(new java.awt.Color(0, 0, 0));
+        }else{
+        jTextArea2.setForeground(new java.awt.Color(0, 0, 0));
+        jTextArea2.setBackground(new java.awt.Color(255, 255, 255));
+        }
+        
+    }  
+    
+    class playbackThread extends Thread{
+    public void run(){
+        while(playbackPoint < jTextArea2.getHeight() && !stopPlayback){
+            jScrollPane2.getViewport().setViewPosition(new Point(0,playbackPoint));
+            playbackPoint++;
+            try {
+                Thread.sleep(jSlider1.getValue());
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TeleprompterGUI.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+}
+    
     /**
      * @param args the command line arguments
      */
@@ -319,39 +444,25 @@ BufferedReader reader = null;
         });
     }
     
- class playbackThread extends Thread{
-    public void run(){
-        while(playbackPoint < jTextArea1.getHeight() && !stopPlayback){
-            jScrollPane1.getViewport().setViewPosition(new Point(0,playbackPoint));
-            playbackPoint++;
-            try {
-                Thread.sleep(jSlider1.getValue());
-            } catch (InterruptedException ex) {
-                Logger.getLogger(TeleprompterGUI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-    }
-}
-
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton5;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuCloseButton;
+    private javax.swing.JMenuItem jMenuCreateButton;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
-    private javax.swing.JMenuItem jMenuItem5;
-    private javax.swing.JMenuItem jMenuItem6;
+    private javax.swing.JMenuItem jMenuOpenButton;
+    private javax.swing.JMenuItem jMenuSaveAsButton;
+    private javax.swing.JMenuItem jMenuSaveButton;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JSlider jSlider1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JButton openButton;
     private javax.swing.JButton pauseButton;
     private javax.swing.JButton playButton;
     private javax.swing.JButton stopButton;
